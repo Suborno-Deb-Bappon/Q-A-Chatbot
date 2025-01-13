@@ -11,15 +11,17 @@ openai.api_key = API_KEY
 MODEL_ENGINE = "gpt-3.5-turbo"
 
 st.title("🤖 Q&A App")
-chat_placeholder = st.empty() 
+chat_placeholder = st.empty()
 
 
 def init_chat_history():
     """Initialize chat history with a system message."""
     if "messages" not in st.session_state:
         st.session_state["messages"] = []
-        st.session_state.messages = [{"role": "system", "content": "You are a helpful assistant! Ask me anything"}] 
-        
+        st.session_state.messages = [
+            {"role": "system", "content": "You are a helpful assistant! Ask me anything"}
+        ] 
+
 
 def start_chat():
     """Start the chatbot conversation."""
@@ -32,21 +34,21 @@ def start_chat():
             elif message["role"] == "assistant":
                 with st.chat_message("assistant"):
                     st.markdown(message["content"])
-                    
+    
     if prompt := st.chat_input("What is up?"):
         st.session_state.messages.append({"role": "user", "content": prompt})
         
         with st.chat_message("user"):
             st.markdown(prompt)
-            
+        
         # generate response from the user input
         response = query(prompt)
-            
+        
         with st.chat_message("assistant"):
             st.markdown(response["answer"])
-            
-        st.session_state.messages.append({"role": "assistant", "content": response["answer"]})
         
+        st.session_state.messages.append({"role": "assistant", "content": response["answer"]})
+
 
 if __name__ == "__main__":
     init_chat_history()

@@ -3,27 +3,20 @@ import sys
 import warnings
 import streamlit as st
 
-# Attempt to use pysqlite3 to replace system sqlite3
-try:
-    import pysqlite3
-    sys.modules['sqlite3'] = pysqlite3
-except ImportError:
-    pass
-
-# Ensure chromadb can use the correct SQLite
-import chromadb
-chromadb.config.Settings.allow_reset = True
-
 # Disable warnings
 warnings.filterwarnings("ignore")
 
 # Imports
+import chromadb
+from chromadb.config import Settings
+
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_community.document_loaders import TextLoader
 from langchain_text_splitters import CharacterTextSplitter
 from langchain_chroma import Chroma
+
 
 # Deployment-safe path configuration
 def get_document_path():
@@ -37,10 +30,10 @@ def get_document_path():
         if os.path.exists(path):
             return path
     
-    st.error(f"FAQ document not found in any of the expected locations")
+    st.error("FAQ document not found in any of the expected locations")
     return None
 
-# Cached resources
+
 @st.cache_resource
 def get_llm():
     return ChatOpenAI(
@@ -49,6 +42,7 @@ def get_llm():
         temperature=0.7
     )
 
+
 @st.cache_resource
 def get_embeddings():
     return OpenAIEmbeddings(
@@ -56,31 +50,39 @@ def get_embeddings():
         api_key=st.secrets["openai_api_key"]
     )
 
+
 @st.cache_resource
 def initialize_vectorstore():
-    """Initialize the vector store from a given document path"""
+    """Initialize the vector store using DuckDB + Parquet (bypassing SQLite)."""
     try:
-        # Get document path
+        # 1) Get document path
         document_path = get_document_path()
         if not document_path:
             st.error("Could not find document path")
             return None
 
-        # Get embeddings
+        # 2) Get embeddings
         embeddings = get_embeddings()
 
-        # Load and split documents
+        # 3) Load and split documents
         documents = TextLoader(document_path).load()
         text_splitter = CharacterTextSplitter(chunk_size=100, chunk_overlap=0, separator="\n")
         splits = text_splitter.split_documents(documents)
 
-        # Create Chroma vectorstore with a unique persist directory
-        persist_directory = os.path.join(os.path.dirname(__file__), "chroma_db")
+        # 4) Create a persist directory
+        persist_directory = os.path.join(os.path.dirname(__file__), "duckdb_chroma_db")
         os.makedirs(persist_directory, exist_ok=True)
 
-        # Configure ChromaDB client
-        chroma_client = chromadb.PersistentClient(path=persist_directory)
+        # 5) Configure Chroma to use DuckDB + Parquet
+        chroma_client = chromadb.Client(
+            Settings(
+                chroma_db_impl="duckdb+parquet",
+                persist_directory=persist_directory,
+                anonymized_telemetry=False
+            )
+        )
 
+        # 6) Create the vector store
         vectorstore = Chroma.from_documents(
             documents=splits,
             embedding=embeddings,
@@ -94,8 +96,10 @@ def initialize_vectorstore():
         st.error(f"Error initializing vector store: {e}")
         return None
 
+
 # Initialize vector store
 vectorstore = initialize_vectorstore()
+
 
 def setup_retriever(vectorstore):
     """Set up the retriever with the vector store"""
@@ -107,6 +111,7 @@ def setup_retriever(vectorstore):
         search_kwargs={"k": 4}
     )
 
+
 # Get retriever
 retriever = setup_retriever(vectorstore)
 
@@ -114,6 +119,7 @@ retriever = setup_retriever(vectorstore)
 def format_docs(docs):
     """Format retrieved documents into a single string"""
     return "\n\n".join(doc.page_content for doc in docs)
+
 
 # QA system prompt
 qa_system_prompt = """You are an assistant for question-answering tasks. \
@@ -125,6 +131,7 @@ Context: {context}
 Question: {input}
 """
 
+
 # Create prompt template
 qa_prompt = ChatPromptTemplate.from_messages([
     ("system", qa_system_prompt),
@@ -134,6 +141,7 @@ qa_prompt = ChatPromptTemplate.from_messages([
 
 # Chat history management
 chat_history = []
+
 
 def query(input_text):
     """
@@ -178,17 +186,3 @@ def query(input_text):
         # Fallback for any unexpected errors
         print(f"Error processing query: {e}")
         return {"answer": f"I'm sorry, but I encountered an error: {str(e)}"}
-
-# Optional: Cleanup method (commented out)
-# def cleanup_vectorstore():
-#     """Clean up the Chroma vector store"""
-#     if vectorstore:
-#         try:
-#             vectorstore.delete_collection()
-#             print("Vector store collection deleted.")
-#         except Exception as e:
-#             print(f"Error deleting vector store collection: {e}")
-
-# Ensure proper cleanup when the script is about to exit
-# import atexit
-# atexit.register(cleanup_vectorstore)
