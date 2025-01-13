@@ -10,7 +10,7 @@ API_KEY = os.getenv("OPENAI_API_KEY")
 openai.api_key = API_KEY
 MODEL_ENGINE = "gpt-3.5-turbo"
 
-st.title("🤖 Q&A App")
+st.title("🤖 Sher-Locked")
 chat_placeholder = st.empty() 
 
 
