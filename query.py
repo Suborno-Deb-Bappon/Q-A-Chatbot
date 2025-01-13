@@ -1,36 +1,123 @@
 import os
+import sys
+import warnings
+import streamlit as st
+
+# Attempt to use pysqlite3 to replace system sqlite3
+try:
+    import pysqlite3
+    sys.modules['sqlite3'] = pysqlite3
+except ImportError:
+    pass
+
+# Disable warnings
+warnings.filterwarnings("ignore")
+
+# Imports with error handling
+try:
+    from langchain_chroma import Chroma
+except ImportError:
+    try:
+        from langchain_community.vectorstores import Chroma
+    except ImportError:
+        Chroma = None
+        st.error("Could not import Chroma vector store")
+
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_community.document_loaders import TextLoader
 from langchain_text_splitters import CharacterTextSplitter
-from langchain_chroma import Chroma
-from langchain_core.runnables import RunnablePassthrough
-from langchain_core.output_parsers import StrOutputParser
-import streamlit as st
 
-from dotenv import load_dotenv
-import warnings
-
-
-warnings.filterwarnings("ignore")
-load_dotenv()
-
-# Initialize LLM and Embeddings
-llm = ChatOpenAI(api_key = st.secrets["openai_api_key"])
-embeddings = OpenAIEmbeddings(model="text-embedding-3-small", api_key = st.secrets["openai_api_key"])
-
-# Contextualize question prompt
-contextualize_q_system_prompt = """Given a chat history and the latest user question {input}, \
-formulate a standalone question which can be understood without the chat history. \
-Do NOT answer the question, just reformulate it if needed and otherwise return it as is."""
-contextualize_q_prompt = ChatPromptTemplate.from_messages(
-    [
-        ("system", contextualize_q_system_prompt),
-        MessagesPlaceholder("chat_history"),
-        ("human", "{input}"),
+# Deployment-safe path configuration
+def get_document_path():
+    possible_paths = [
+        "./docs/faq.txt",  # Local development
+        "/mount/src/q-a-chatbot/docs/faq.txt",  # Streamlit Cloud
+        os.path.join(os.path.dirname(__file__), "docs/faq.txt")  # Relative path
     ]
-)
+    
+    for path in possible_paths:
+        if os.path.exists(path):
+            return path
+    
+    st.error(f"FAQ document not found in any of the expected locations")
+    return None
+
+# Cached resources
+@st.cache_resource
+def get_llm():
+    return ChatOpenAI(
+        api_key=st.secrets["openai_api_key"],
+        model="gpt-3.5-turbo",
+        temperature=0.7
+    )
+
+@st.cache_resource
+def get_embeddings():
+    return OpenAIEmbeddings(
+        model="text-embedding-3-small", 
+        api_key=st.secrets["openai_api_key"]
+    )
+
+@st.cache_resource
+def initialize_vectorstore():
+    """Initialize the vector store from a given document path"""
+    # Ensure Chroma is available
+    if Chroma is None:
+        st.error("Chroma vector store is not available")
+        return None
+
+    try:
+        # Get document path
+        document_path = get_document_path()
+        if not document_path:
+            st.error("Could not find document path")
+            return None
+
+        # Get embeddings
+        embeddings = get_embeddings()
+
+        # Load and split documents
+        documents = TextLoader(document_path).load()
+        text_splitter = CharacterTextSplitter(chunk_size=100, chunk_overlap=0, separator="\n")
+        splits = text_splitter.split_documents(documents)
+
+        # Create Chroma vectorstore with a unique persist directory
+        persist_directory = os.path.join(os.path.dirname(__file__), "chroma_db")
+        os.makedirs(persist_directory, exist_ok=True)
+
+        vectorstore = Chroma.from_documents(
+            documents=splits,
+            embedding=embeddings,
+            collection_name="faq_collection",
+            persist_directory=persist_directory
+        )
+        
+        return vectorstore
+    except Exception as e:
+        st.error(f"Error initializing vector store: {e}")
+        return None
+
+# Initialize vector store
+vectorstore = initialize_vectorstore()
+
+def setup_retriever(vectorstore):
+    """Set up the retriever with the vector store"""
+    if vectorstore is None:
+        st.error("Vector store not initialized")
+        return None
+    return vectorstore.as_retriever(
+        search_type="similarity",
+        search_kwargs={"k": 4}
+    )
+
+# Get retriever
+retriever = setup_retriever(vectorstore)
+
+def format_docs(docs):
+    """Format retrieved documents into a single string"""
+    return "\n\n".join(doc.page_content for doc in docs)
 
 # QA system prompt
 qa_system_prompt = """You are an assistant for question-answering tasks. \
@@ -41,54 +128,17 @@ Use three sentences maximum and keep the answer concise.
 Context: {context}
 Question: {input}
 """
+
+# Create prompt template
 qa_prompt = ChatPromptTemplate.from_messages([
     ("system", qa_system_prompt),
     MessagesPlaceholder("chat_history"),
     ("human", "{input}"),
 ])
 
-# Indexing
-def initialize_vectorstore(document_path):
-    """Initialize the vector store from a given document path"""
-    try:
-        documents = TextLoader(document_path).load()
-        text_splitter = CharacterTextSplitter(chunk_size=100, chunk_overlap=0, separator="\n")
-        splits = text_splitter.split_documents(documents)
-
-        vectorstore = Chroma.from_documents(
-            documents=splits,
-            embedding=embeddings,
-            collection_name="faq_collection",
-            persist_directory="./chroma_db"
-        )
-        return vectorstore
-    except Exception as e:
-        print(f"Error initializing vector store: {e}")
-        return None
-
-# Initialize vector store (adjust path as needed)
-vectorstore = initialize_vectorstore("./docs/faq.txt")
-
-# Retriever setup
-def setup_retriever(vectorstore):
-    """Set up the retriever with the vector store"""
-    if vectorstore is None:
-        return None
-    return vectorstore.as_retriever(
-        search_type="similarity",
-        search_kwargs={"k": 4}
-    )
-
-retriever = setup_retriever(vectorstore)
-
-def format_docs(docs):
-    """Format retrieved documents into a single string"""
-    return "\n\n".join(doc.page_content for doc in docs)
-
 # Chat history management
 chat_history = []
 
-# For simple single-turn dialogues, we can use the following enhanced query function 
 def query(input_text):
     """
     Main query function that returns a response to the user input
@@ -97,13 +147,16 @@ def query(input_text):
         input_text (str): User's input question
 
     Returns:
-        str: Generated response
+        dict: Generated response
     """
     # Check if vectorstore and retriever are initialized
     if vectorstore is None or retriever is None:
-        return "Error: Vector store not initialized. Cannot process query."
+        return {"answer": "Error: Vector store not initialized. Cannot process query."}
 
     try:
+        # Get LLM
+        llm = get_llm()
+
         # Retrieve relevant documents
         retrieved_docs = retriever.invoke(input_text)
         context = format_docs(retrieved_docs)
@@ -128,10 +181,9 @@ def query(input_text):
     except Exception as e:
         # Fallback for any unexpected errors
         print(f"Error processing query: {e}")
-        return f"I'm sorry, but I encountered an error: {str(e)}"
+        return {"answer": f"I'm sorry, but I encountered an error: {str(e)}"}
 
-
-# Optional: Add a cleanup method
+# Optional: Cleanup method (commented out)
 # def cleanup_vectorstore():
 #     """Clean up the Chroma vector store"""
 #     if vectorstore:
