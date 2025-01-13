@@ -6,6 +6,7 @@ from langchain_text_splitters import CharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
+import streamlit as st
 
 from dotenv import load_dotenv
 import warnings
@@ -15,8 +16,8 @@ warnings.filterwarnings("ignore")
 load_dotenv()
 
 # Initialize LLM and Embeddings
-embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-llm = ChatOpenAI()
+llm = ChatOpenAI(api_key = st.secrets["openai_api_key"])
+embeddings = OpenAIEmbeddings(model="text-embedding-3-small", api_key = st.secrets["openai_api_key"])
 
 # Contextualize question prompt
 contextualize_q_system_prompt = """Given a chat history and the latest user question {input}, \
