@@ -10,24 +10,20 @@ try:
 except ImportError:
     pass
 
+# Ensure chromadb can use the correct SQLite
+import chromadb
+chromadb.config.Settings.allow_reset = True
+
 # Disable warnings
 warnings.filterwarnings("ignore")
 
-# Imports with error handling
-try:
-    from langchain_chroma import Chroma
-except ImportError:
-    try:
-        from langchain_community.vectorstores import Chroma
-    except ImportError:
-        Chroma = None
-        st.error("Could not import Chroma vector store")
-
+# Imports
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_community.document_loaders import TextLoader
 from langchain_text_splitters import CharacterTextSplitter
+from langchain_chroma import Chroma
 
 # Deployment-safe path configuration
 def get_document_path():
@@ -63,11 +59,6 @@ def get_embeddings():
 @st.cache_resource
 def initialize_vectorstore():
     """Initialize the vector store from a given document path"""
-    # Ensure Chroma is available
-    if Chroma is None:
-        st.error("Chroma vector store is not available")
-        return None
-
     try:
         # Get document path
         document_path = get_document_path()
@@ -87,9 +78,13 @@ def initialize_vectorstore():
         persist_directory = os.path.join(os.path.dirname(__file__), "chroma_db")
         os.makedirs(persist_directory, exist_ok=True)
 
+        # Configure ChromaDB client
+        chroma_client = chromadb.PersistentClient(path=persist_directory)
+
         vectorstore = Chroma.from_documents(
             documents=splits,
             embedding=embeddings,
+            client=chroma_client,
             collection_name="faq_collection",
             persist_directory=persist_directory
         )
@@ -114,6 +109,7 @@ def setup_retriever(vectorstore):
 
 # Get retriever
 retriever = setup_retriever(vectorstore)
+
 
 def format_docs(docs):
     """Format retrieved documents into a single string"""
