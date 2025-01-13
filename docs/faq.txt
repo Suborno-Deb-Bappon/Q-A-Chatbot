@@ -1,16 +1,147 @@
-﻿Red30 Shoes
-Frequently Asked Questions (FAQs)
-What various types of shoes does Red30 Shoes offer?
-* Red30 Shoes offers a wide variety of styles including casual, sports, formal, and specialty footwear for all ages.
-What is Red30 Shoes's return policy?
-* We accept all returns within 30 days of purchase, and shoes must be in original condition with original packaging.
-How can I submit a claim or contact the customer service team?
-* Reach out to us at our email address or call us (email address and toll-free phone number available on our website).
-How much does international shipping cost?
-* International shipping costs vary by destination, starting at $15.
-What are Red30 Shoes business hours?
-* Our online store is available 24/7 for your convenience. Brick and mortar stores are open from 9 AM to 8 PM, Monday through Saturday, closed Sunday.
-Are your products environmentally friendly?
-* Yes, we have a wide eco-friendly line made from all sustainable materials.
-Is there an Red30 Shoes loyalty program?
-* Yes! Customers earn points with every purchase, redeemable for discounts on future purchases.
+Q: Who created the character of Sherlock Holmes?
+A: Sherlock Holmes was created by Sir Arthur Conan Doyle, a Scottish physician and writer.
+
+Q: What is the profession of Sherlock Holmes?
+A: Sherlock Holmes is a consulting detective, renowned for his logical reasoning and observation skills.
+
+Q: Where does Sherlock Holmes live?
+A: Sherlock Holmes resides at 221B Baker Street, London.
+
+Q: Who is Sherlock Holmes' close friend and companion?
+A: Dr. John H. Watson, a medical doctor and Holmes' biographer, is his close friend and companion.
+
+Q: What is Sherlock Holmes' most famous phrase?
+A: Although often misquoted, Holmes is popularly associated with the phrase, 'Elementary, my dear Watson.'
+
+Q: Who is Sherlock Holmes' archenemy?
+A: Professor James Moriarty, a criminal mastermind, is considered Holmes' archenemy.
+
+Q: What is the first Sherlock Holmes story?
+A: 'A Study in Scarlet,' published in 1887, is the first story featuring Sherlock Holmes.
+
+Q: How many stories are there in the Sherlock Holmes canon?
+A: There are 56 short stories and 4 novels in the official Sherlock Holmes canon.
+
+Q: What is the title of the novel featuring the legendary hound?
+A: The novel is titled 'The Hound of the Baskervilles,' one of Holmes' most famous cases.
+
+Q: What are some recurring themes in the Sherlock Holmes stories?
+A: Themes include the triumph of logic over superstition, the role of science in solving mysteries, and the complexity of human motives.
+
+Q: What is the name of Sherlock Holmes' brother?
+A: His brother's name is Mycroft Holmes, who is even more intelligent but less active than Sherlock.
+
+Q: What is the name of Sherlock Holmes' housekeeper?
+A: Mrs. Hudson is the housekeeper at 221B Baker Street.
+
+Q: Which novel features the 'Study in Scarlet' clue?
+A: 'A Study in Scarlet' features a clue written in blood.
+
+Q: What instrument does Sherlock Holmes play?
+A: Holmes plays the violin.
+
+Q: What is the name of the Scotland Yard inspector often working with Holmes?
+A: Inspector Lestrade is a recurring Scotland Yard inspector in the stories.
+
+Q: Which story involves the Red-Headed League?
+A: 'The Red-Headed League' is one of Holmes' short stories, involving a peculiar job for red-headed men.
+
+Q: What is the name of the woman Holmes admires?
+A: Irene Adler, who appears in 'A Scandal in Bohemia,' is the woman Holmes admires.
+
+Q: Which story features the Reichenbach Falls?
+A: 'The Final Problem' features Holmes' confrontation with Moriarty at the Reichenbach Falls.
+
+Q: What disguise does Holmes often use?
+A: Holmes is known to use a variety of disguises, including a sailor, beggar, and elderly clergyman.
+
+Q: What is the 'Speckled Band' in the story?
+A: The 'Speckled Band' refers to a venomous snake used as a murder weapon.
+
+Q: Which story involves the Blue Carbuncle?
+A: 'The Adventure of the Blue Carbuncle' involves a stolen gem hidden inside a goose.
+
+Q: What is the main method Holmes uses to solve cases?
+A: Holmes relies on observation, deduction, and logical reasoning.
+
+Q: Who narrates most of the Sherlock Holmes stories?
+A: Dr. Watson narrates most of the stories, providing a first-hand account.
+
+Q: What is Holmes' attitude towards emotions?
+A: Holmes views emotions as distractions that can cloud judgment.
+
+Q: Which story involves the Baskerville family curse?
+A: 'The Hound of the Baskervilles' revolves around a curse allegedly haunting the Baskerville family.
+
+Q: What is the title of Holmes' final story?
+A: 'His Last Bow' is the final story chronologically in the canon.
+
+Q: What is Holmes' favorite type of hat?
+A: Holmes is often depicted wearing a deerstalker hat.
+
+Q: What is Holmes' attitude toward fame?
+A: Holmes is largely indifferent to fame and prefers his work to remain private.
+
+Q: Which story involves the Naval Treaty?
+A: 'The Adventure of the Naval Treaty' involves a stolen government document.
+
+Q: What is Holmes' opinion of Watson's writing?
+A: Holmes often criticizes Watson's writing for being too romanticized.
+
+Q: Which story features the Musgrave Ritual?
+A: 'The Adventure of the Musgrave Ritual' involves a centuries-old family tradition hiding a treasure.
+
+Q: What type of tobacco does Holmes prefer?
+A: Holmes is known to smoke strong shag tobacco.
+
+Q: Who is the client in 'The Adventure of the Copper Beeches'?
+A: Violet Hunter is the client in 'The Adventure of the Copper Beeches.'
+
+Q: Which story involves a group called the 'Four'?
+A: 'The Sign of the Four' involves a treasure and a pact among four convicts.
+
+Q: Which animal appears in 'Silver Blaze'?
+A: 'Silver Blaze' involves a missing racehorse and a clever twist.
+
+Q: What role does Mary Morstan play in the stories?
+A: Mary Morstan is Watson's wife and appears in 'The Sign of the Four.'
+
+Q: What is the setting of most Sherlock Holmes stories?
+A: Most stories are set in Victorian and Edwardian London.
+
+Q: Which story features the client Helen Stoner?
+A: 'The Adventure of the Speckled Band' features Helen Stoner.
+
+Q: What is the role of Baker Street Irregulars?
+A: The Baker Street Irregulars are a group of street children Holmes uses for intelligence gathering.
+
+Q: What does Holmes often use to relax?
+A: Holmes uses playing the violin and, controversially, drugs like cocaine to relax.
+
+Q: What is the main theme of 'The Adventure of the Dancing Men'?
+A: The story involves deciphering a secret code made of stick figures.
+
+Q: Which story involves a treasure chest and a map?
+A: 'The Sign of the Four' features a treasure chest and a map.
+
+Q: What is the narrative style of the stories?
+A: The stories are mostly first-person accounts by Watson.
+
+Q: What kind of cases does Holmes refuse to take?
+A: Holmes refuses cases that lack intellectual challenge or moral integrity.
+
+Q: What is Holmes' attitude towards the supernatural?
+A: Holmes dismisses the supernatural, relying strictly on logical explanations.
+
+Q: Which story features Holmes faking his own death?
+A: 'The Final Problem' suggests Holmes' death, but he reappears in 'The Adventure of the Empty House.'
+
+Q: What does Holmes often carry with him?
+A: Holmes is known to carry a magnifying glass and a notebook.
+
+Q: What is unique about 'The Adventure of the Blanched Soldier'?
+A: It is one of the few stories narrated by Holmes himself.
+
+Q: What is the name of Holmes' landlady?
+A: Mrs. Hudson is the name of Holmes' landlady.
+
