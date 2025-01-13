@@ -7,6 +7,8 @@ import streamlit as st
 warnings.filterwarnings("ignore")
 
 # Imports
+# Force DuckDB so Chromadb won't do any SQLite checks
+os.environ["CHROMA_DB_IMPL"] = "duckdb+parquet"
 import chromadb
 from chromadb.config import Settings
 
